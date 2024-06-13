@@ -9,6 +9,8 @@ namespace VAArGalleryWebAPITest
 {
     public class Tests
     {
+        #region Setup
+
         private ArtGallery g1 = new ArtGallery("Gallery One", "Beja", "Baltazar Braz");
         private ArtGallery g2 = new ArtGallery("Gallery Two", "Bragança", "Bernardo Beltrão");
         private ArtWork a1 = new ArtWork("obra 1", "artista 1", 1900, 1000);
@@ -22,6 +24,10 @@ namespace VAArGalleryWebAPITest
         {
             SetupGalleriesAndWorks();
         }
+
+        #endregion Setup
+
+        #region GetAllArtGalleriesQuery
 
         [Test]
         public async Task Test_Returns_the_galleries_successfully()
@@ -50,6 +56,8 @@ namespace VAArGalleryWebAPITest
             Assert.That(r.Count(), Is.EqualTo(2));
             Assert.That(r.First(), Is.EqualTo(a1));
         }
+
+        #endregion GetAllArtGalleriesQuery
 
         #region GetArtGalleryByIdQuery
 
@@ -395,6 +403,59 @@ namespace VAArGalleryWebAPITest
 
         #endregion CreateArtWorkCommand
 
+        #region UpdateArtWorkCommand
+
+        [Test]
+        public async Task Test_UpdateArtWorkCommand_Handle_ShouldReturnUpdatedArtWork_WhenArtWorkExists()
+        {
+            // Arrange
+            var updateRequest = new UpdateArtWorkRequest(a1.Id, "Updated Name", "Updated Author", 2001, 2000);
+            var command = new UpdateArtWorkCommand(g1.Id, updateRequest);
+            var handler = new UpdateArtWorkCommandHandler(NormalArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(a1.Id));
+            Assert.That(result.Name, Is.EqualTo(updateRequest.Name));
+            Assert.That(result.Author, Is.EqualTo(updateRequest.Author));
+            Assert.That(result.CreationYear, Is.EqualTo(updateRequest.CreationYear));
+            Assert.That(result.AskPrice, Is.EqualTo(updateRequest.AskPrice));
+        }
+
+        [Test]
+        public async Task Test_UpdateArtWorkCommand_Handle_ShouldReturnNull_WhenArtWorkDoesNotExist()
+        {
+            // Arrange
+            var updateRequest = new UpdateArtWorkRequest(Guid.NewGuid(), "Updated Name", "Updated Author", 2001, 2000);
+            var command = new UpdateArtWorkCommand(g1.Id, updateRequest);
+            var handler = new UpdateArtWorkCommandHandler(NormalArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public async Task Test_UpdateArtWorkCommand_Handle_ShouldReturnNull_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            var command = new UpdateArtWorkCommand(Guid.Empty, null);
+            var handler = new UpdateArtWorkCommandHandler(NormalArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        #endregion UpdateArtWorkCommand
+
         #region SetupsAndMocks
 
         private void SetupGalleriesAndWorks()
@@ -438,6 +499,7 @@ namespace VAArGalleryWebAPITest
             mock.Setup(m => m.GetArtWorksByGalleryIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync([a1, a2]);
             mock.Setup(m => m.GetArtWorkyByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, CancellationToken token) => id == a1.Id ? a1 : null);
             mock.Setup(m => m.CreateAsync(It.IsAny<Guid>(), It.IsAny<ArtWork>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, ArtWork artWork, CancellationToken token) => artWork);
+            mock.Setup(m => m.UpdateAsync(It.IsAny<Guid>(), It.IsAny<ArtWork>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, ArtWork artWork, CancellationToken token) => artWork);
 
             return mock;
         }
