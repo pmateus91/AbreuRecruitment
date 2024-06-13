@@ -3,3 +3,6 @@ VARecruitmentWebAPI/bin/
 VAArtGalleryWebAPITest/obj/
 .vs/
 VAArtGalleryWebAPITest/bin/
+
+# Build results
+[Dd]ebug/
