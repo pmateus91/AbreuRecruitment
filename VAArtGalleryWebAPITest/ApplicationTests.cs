@@ -297,6 +297,53 @@ namespace VAArGalleryWebAPITest
 
         #endregion UpdateArtGalleryCommand
 
+        #region DeleteArtGalleryCommand
+
+        [Test]
+        public async Task Test_DeleteArtGalleryCommand_Handle_ShouldReturnTrue_WhenArtGalleryExists()
+        {
+            // Arrange
+            var command = new DeleteArtGalleryCommand(g1.Id);
+            var handler = new DeleteArtGalleryCommandHandler(NormalArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public async Task Test_DeleteArtGalleryCommand_Handle_ShouldReturnFalse_WhenArtGalleryDoesNotExist()
+        {
+            // Arrange
+            var nonExistentId = Guid.NewGuid();
+            var command = new DeleteArtGalleryCommand(nonExistentId);
+            var handler = new DeleteArtGalleryCommandHandler(NormalArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task Test_DeleteArtGalleryCommand_Handle_ShouldReturnFalse_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            var command = new DeleteArtGalleryCommand(g1.Id);
+            var handler = new DeleteArtGalleryCommandHandler(InvalidArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        #endregion DeleteArtGalleryCommand
+
         #region SetupsAndMocks
 
         private void SetupGalleriesAndWorks()
@@ -322,6 +369,7 @@ namespace VAArGalleryWebAPITest
             mock.Setup(m => m.CreateAsync(It.IsAny<ArtGallery>(), It.IsAny<CancellationToken>())).ReturnsAsync((ArtGallery artGallery, CancellationToken token) =>
                     new ArtGallery(artGallery.Name, artGallery.City, artGallery.Manager) { Id = Guid.NewGuid() });
             mock.Setup(m => m.UpdateAsync(It.IsAny<ArtGallery>(), It.IsAny<CancellationToken>())).ReturnsAsync(g1);
+            mock.Setup(m => m.DeleteAsync(g1.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
             return mock;
         }
