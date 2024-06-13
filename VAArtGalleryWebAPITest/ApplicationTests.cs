@@ -456,6 +456,52 @@ namespace VAArGalleryWebAPITest
 
         #endregion UpdateArtWorkCommand
 
+        #region DeleteArtWorkCommand
+
+        [Test]
+        public async Task Test_DeleteArtWorkCommand_Handle_ShouldReturnTrue_WhenArtWorkExists()
+        {
+            // Arrange
+            var command = new DeleteArtWorkCommand(a1.Id);
+            var handler = new DeleteArtWorkCommandHandler(NormalArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public async Task Test_DeleteArtWorkCommand_Handle_ShouldReturnFalse_WhenArtWorkDoesNotExist()
+        {
+            // Arrange
+            var command = new DeleteArtWorkCommand(Guid.NewGuid());
+            var handler = new DeleteArtWorkCommandHandler(NormalArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task Test_DeleteArtWorkCommand_Handle_ShouldReturnFalse_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            var command = new DeleteArtWorkCommand(a1.Id);
+            var handler = new DeleteArtWorkCommandHandler(InvalidArtWorksRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        #endregion DeleteArtWorkCommand
+
         #region SetupsAndMocks
 
         private void SetupGalleriesAndWorks()
@@ -500,7 +546,15 @@ namespace VAArGalleryWebAPITest
             mock.Setup(m => m.GetArtWorkyByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, CancellationToken token) => id == a1.Id ? a1 : null);
             mock.Setup(m => m.CreateAsync(It.IsAny<Guid>(), It.IsAny<ArtWork>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, ArtWork artWork, CancellationToken token) => artWork);
             mock.Setup(m => m.UpdateAsync(It.IsAny<Guid>(), It.IsAny<ArtWork>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, ArtWork artWork, CancellationToken token) => artWork);
+            mock.Setup(m => m.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
+            return mock;
+        }
+
+        private Mock<IArtWorkRepository> InvalidArtWorksRepositoryMock()
+        {
+            var mock = new Mock<IArtWorkRepository>(MockBehavior.Strict);
+            mock.Setup(m => m.GetArtWorkyByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentNullException("artWorkId"));
             return mock;
         }
 
