@@ -42,6 +42,15 @@
             return ArtWorksOnDisplay;
         }
 
+        public ArtGallery Update(string name, string city, string manager)
+        {
+            Name = string.IsNullOrEmpty(name) ? Name : name;
+            City = string.IsNullOrEmpty(city) ? City : city;
+            Manager = string.IsNullOrEmpty(manager) ? Manager : manager;
+
+            return this;
+        }
+
         private bool IsArtWorkOnDisplay(Guid id) => ArtWorksOnDisplay?.Select(aw => aw.Id).Contains(id) ?? false;
     }
 }

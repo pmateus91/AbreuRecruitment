@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
-using VAArtGalleryWebAPI.Domain.Interfaces;
 using VAArtGalleryWebAPI.Domain.Entities;
+using VAArtGalleryWebAPI.Domain.Interfaces;
 
 namespace VAArtGalleryWebAPI.Infrastructure
 {
@@ -20,12 +20,12 @@ namespace VAArtGalleryWebAPI.Infrastructure
             });
         }
 
-        public async Task<ArtGallery?> GetArtGalleryByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<ArtGallery?> GetArtGalleryByIdAsync(Guid artGalleryId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var galleries = await GetAllArtGalleriesAsync(cancellationToken);
-            return galleries.Find(g => g.Id == id);
+            return galleries.Find(g => g.Id == artGalleryId);
         }
 
         public async Task<ArtGallery> CreateAsync(ArtGallery artGallery, CancellationToken cancellationToken = default)
@@ -37,14 +37,48 @@ namespace VAArtGalleryWebAPI.Infrastructure
             artGallery.Id = Guid.NewGuid();
             galleries.Add(artGallery);
 
-            return await Task.Run(() =>
-            {
-                using TextWriter tw = new StreamWriter(_filePath, false);
-                tw.Write(JsonSerializer.Serialize(galleries));
+            await SaveGalleries(galleries);
 
-                return artGallery;
-            });
+            return artGallery;
+        }
 
+        public async Task<ArtGallery> UpdateAsync(ArtGallery artGallery, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var galleries = await GetAllArtGalleriesAsync(cancellationToken);
+            var galleryToUpdate = galleries.Find(g => g.Id == artGallery.Id) ?? throw new ArgumentException("unknown art gallery", nameof(artGallery));
+
+            galleryToUpdate.Update(artGallery.Name, artGallery.City, artGallery.Manager);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await SaveGalleries(galleries);
+
+            return artGallery;
+        }
+
+        public async Task<bool> DeleteAsync(Guid artGalleryId, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var galleries = await GetAllArtGalleriesAsync(cancellationToken);
+
+            var artGalleryToRemove = galleries.Find(g => g.Id == artGalleryId) ?? throw new ArgumentException("unknown art gallery", nameof(artGalleryId));
+
+            galleries.Remove(artGalleryToRemove);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await SaveGalleries(galleries);
+
+            return true;
+        }
+
+        private async Task SaveGalleries(List<ArtGallery> galleries)
+        {
+            using TextWriter tw = new StreamWriter(_filePath, false);
+            await tw.WriteAsync(JsonSerializer.Serialize(galleries));
         }
     }
 }
