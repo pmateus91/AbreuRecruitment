@@ -23,6 +23,16 @@
             return this;
         }
 
+        public ArtWork Update(string name, string author, int creationYear, decimal askPrice)
+        {
+            Name = string.IsNullOrWhiteSpace(name) ? Name : name;
+            Author = string.IsNullOrWhiteSpace(author) ? Author : author;
+            CreationYear = ValidateCreationYear(creationYear) ? CreationYear : creationYear;
+            AskPrice = ValidateAskPrice(askPrice) ? AskPrice : askPrice;
+
+            return this;
+        }
+
         private static bool ValidateCreationYear(decimal year) => year > DateTime.Now.Year;
 
         private static bool ValidateAskPrice(decimal amount) => amount <= 0;
