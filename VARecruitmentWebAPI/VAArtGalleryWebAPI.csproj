@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Application\Commands\" />
-    <Folder Include="Application\Queries\ArtWork\" />
   </ItemGroup>
 
 </Project>

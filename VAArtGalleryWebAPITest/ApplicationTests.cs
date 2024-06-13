@@ -1,5 +1,5 @@
-using VAArtGalleryWebAPI.Application.Queries;
 using Moq;
+using VAArtGalleryWebAPI.Application.Queries;
 using VAArtGalleryWebAPI.Domain.Entities;
 using VAArtGalleryWebAPI.Domain.Interfaces;
 
@@ -7,14 +7,13 @@ namespace VAArGalleryWebAPITest
 {
     public class Tests
     {
-        ArtGallery g1 = new ArtGallery("Gallery One", "Beja", "Baltazar Braz");
-        ArtGallery g2 = new ArtGallery("Gallery Two", "Bragança", "Bernardo Beltrão");
-        ArtWork a1 = new ArtWork("obra 1", "artista 1", 1900, 1000);
-        ArtWork a2 = new ArtWork("obra 2", "artista 1", 1910, 1500);
-        ArtWork a3 = new ArtWork("obra 3", "artista 2", 1920, 2000);
-        ArtWork a4 = new ArtWork("obra 4", "artista 3", 1930, 5000);
-        ArtWork a5 = new ArtWork("obra 5", "artista 4", 1940, 10000);
-
+        private ArtGallery g1 = new ArtGallery("Gallery One", "Beja", "Baltazar Braz");
+        private ArtGallery g2 = new ArtGallery("Gallery Two", "Bragança", "Bernardo Beltrão");
+        private ArtWork a1 = new ArtWork("obra 1", "artista 1", 1900, 1000);
+        private ArtWork a2 = new ArtWork("obra 2", "artista 1", 1910, 1500);
+        private ArtWork a3 = new ArtWork("obra 3", "artista 2", 1920, 2000);
+        private ArtWork a4 = new ArtWork("obra 4", "artista 3", 1930, 5000);
+        private ArtWork a5 = new ArtWork("obra 5", "artista 4", 1940, 10000);
 
         [SetUp]
         public void Setup()
@@ -26,7 +25,7 @@ namespace VAArGalleryWebAPITest
         public async Task Test_Returns_the_galleries_successfully()
         {
             var r = await new GetAllArtGalleriesQueryHandler(NormalArtGalleryRepositoryMock().Object).Handle(new GetAllArtGalleriesQuery(), CancellationToken.None);
-            
+
             Assert.That(r, Is.Not.Null);
             Assert.That(r.Count, Is.EqualTo(2));
             Assert.That(r.First().Manager, Is.EqualTo("Baltazar Braz"));
@@ -50,6 +49,71 @@ namespace VAArGalleryWebAPITest
             Assert.That(r.First(), Is.EqualTo(a1));
         }
 
+        #region GetArtWorkById
+
+        [Test]
+        public async Task Test_GetArtWorkById_Handle_ShouldReturnArtWork_WhenArtWorkExists()
+        {
+            // Arrange
+            var query = new GetArtWorkByIdQuery(a1.Id);
+
+            // Act
+            var result = await new GetArtWorkByIdQueryHandler(NormalArtWorksRepositoryMock().Object).Handle(query, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(a1.Id));
+            Assert.That(result.Name, Is.EqualTo(a1.Name));
+            Assert.That(result.Author, Is.EqualTo(a1.Author));
+            Assert.That(result.CreationYear, Is.EqualTo(a1.CreationYear));
+            Assert.That(result.AskPrice, Is.EqualTo(a1.AskPrice));
+        }
+
+        [Test]
+        public async Task Test_GetArtWorkById_Handle_ShouldReturnNull_WhenArtWorkDoesNotExist()
+        {
+            // Arrange
+            var artWorkId = Guid.NewGuid();
+            var query = new GetArtWorkByIdQuery(artWorkId);
+
+            // Act
+            var result = await new GetArtWorkByIdQueryHandler(NormalArtWorksRepositoryMock().Object).Handle(query, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public async Task Test_GetArtWorkById_Handle_ShouldReturnNull_WhenArgumentNullExceptionThrown()
+        {
+            // Arrange
+            var invalidArtWorkRepositoryMock = InvalidGalleryArtWorksRepositoryMock();
+            var handler = new GetArtWorkByIdQueryHandler(invalidArtWorkRepositoryMock.Object);
+            var query = new GetArtWorkByIdQuery(a1.Id);
+
+            // Act
+            var result = await handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Test_GetArtWorkById_Handle_ShouldThrowException_ForUnknownExceptions()
+        {
+            // Arrange
+            var artWorkId = Guid.NewGuid();
+            var unknownExceptionMock = new Mock<IArtWorkRepository>();
+            unknownExceptionMock.Setup(repo => repo.GetArtWorkyByIdAsync(artWorkId, It.IsAny<CancellationToken>()))
+                                .ThrowsAsync(new Exception("Unknown error"));
+            var handler = new GetArtWorkByIdQueryHandler(unknownExceptionMock.Object);
+            var query = new GetArtWorkByIdQuery(artWorkId);
+
+            // Act & Assert
+            Assert.ThrowsAsync<Exception>(() => handler.Handle(query, CancellationToken.None));
+        }
+
+        #endregion GetArtWorkById
 
         private void SetupGalleriesAndWorks()
         {
@@ -78,6 +142,7 @@ namespace VAArGalleryWebAPITest
         {
             var mock = new Mock<IArtWorkRepository>(MockBehavior.Strict);
             mock.Setup(m => m.GetArtWorksByGalleryIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync([a1, a2]);
+            mock.Setup(m => m.GetArtWorkyByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, CancellationToken token) => id == a1.Id ? a1 : null);
 
             return mock;
         }
@@ -86,9 +151,9 @@ namespace VAArGalleryWebAPITest
         {
             var mock = new Mock<IArtWorkRepository>(MockBehavior.Strict);
             mock.Setup(m => m.GetArtWorksByGalleryIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentException("", "artGalleryId"));
+            mock.Setup(m => m.GetArtWorkyByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentNullException("artWorkId"));
 
             return mock;
         }
-
     }
 }
