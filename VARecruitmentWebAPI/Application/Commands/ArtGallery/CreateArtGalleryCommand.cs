@@ -5,12 +5,12 @@ using VAArtGalleryWebAPI.WebApi.Models;
 
 namespace VAArtGalleryWebAPI.Application.Commands
 {
-    public class CreateArtGalleryCommand(CreateArtGalleryRequest createArtGalleryRequest) : IRequest<CreateArtGalleryResult>
+    public class CreateArtGalleryCommand(CreateArtGalleryRequest createArtGalleryRequest) : IRequest<SaveArtGalleryResult>
     {
         public CreateArtGalleryRequest CreateArtGalleryRequest { get; set; } = createArtGalleryRequest;
     }
 
-    internal sealed class CreateArtGalleryCommandHandler : IRequestHandler<CreateArtGalleryCommand, CreateArtGalleryResult?>
+    internal sealed class CreateArtGalleryCommandHandler : IRequestHandler<CreateArtGalleryCommand, SaveArtGalleryResult?>
     {
         private readonly IArtGalleryRepository _artGalleryRepository;
 
@@ -19,7 +19,7 @@ namespace VAArtGalleryWebAPI.Application.Commands
             _artGalleryRepository = artGalleryRepository ?? throw new ArgumentNullException(nameof(artGalleryRepository));
         }
 
-        public async Task<CreateArtGalleryResult?> Handle(CreateArtGalleryCommand request, CancellationToken cancellationToken)
+        public async Task<SaveArtGalleryResult?> Handle(CreateArtGalleryCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace VAArtGalleryWebAPI.Application.Commands
 
                 var result = await _artGalleryRepository.CreateAsync(artGallery, cancellationToken);
 
-                return new CreateArtGalleryResult(result.Id, result.Name, result.City, result.Manager);
+                return new SaveArtGalleryResult(result.Id, result.Name, result.City, result.Manager);
             }
             catch (ArgumentNullException ex) when (ex.ParamName == nameof(request))
             {

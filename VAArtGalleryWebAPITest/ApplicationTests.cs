@@ -236,6 +236,67 @@ namespace VAArGalleryWebAPITest
 
         #endregion CreateArtGalleryCommand
 
+        #region UpdateArtGalleryCommand
+
+        [Test]
+        public async Task Test_UpdateArtGalleryCommand_Handle_ShouldReturnSaveArtGalleryResult_WhenArtGalleryExists()
+        {
+            // Arrange
+            var command = new UpdateArtGalleryCommand(new UpdateArtGalleryRequest
+                (g1.Id,
+                "Updated Gallery",
+                "Updated City",
+                "Updated Manager"));
+
+            var handler = new UpdateArtGalleryCommandHandler(NormalArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(g1.Id));
+            Assert.That(result.Name, Is.EqualTo("Updated Gallery"));
+            Assert.That(result.City, Is.EqualTo("Updated City"));
+            Assert.That(result.Manager, Is.EqualTo("Updated Manager"));
+        }
+
+        [Test]
+        public async Task Test_UpdateArtGalleryCommand_Handle_ShouldReturnNull_WhenArtGalleryDoesNotExist()
+        {
+            // Arrange
+            var command = new UpdateArtGalleryCommand(new UpdateArtGalleryRequest(
+                Guid.NewGuid(),
+                "Updated Gallery",
+                "Updated City",
+                "Updated Manager"));
+
+            var handler = new UpdateArtGalleryCommandHandler(NormalArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public async Task Test_UpdateArtGalleryCommand_Handle_ShouldReturnNull_WhenUpdateArtGalleryRequestIsNull()
+        {
+            // Arrange
+            var command = new UpdateArtGalleryCommand(null);
+
+            var handler = new UpdateArtGalleryCommandHandler(NormalArtGalleryRepositoryMock().Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        #endregion UpdateArtGalleryCommand
+
         #region SetupsAndMocks
 
         private void SetupGalleriesAndWorks()
@@ -260,6 +321,7 @@ namespace VAArGalleryWebAPITest
             mock.Setup(m => m.GetArtGalleryByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, CancellationToken token) => id == g1.Id ? g1 : null);
             mock.Setup(m => m.CreateAsync(It.IsAny<ArtGallery>(), It.IsAny<CancellationToken>())).ReturnsAsync((ArtGallery artGallery, CancellationToken token) =>
                     new ArtGallery(artGallery.Name, artGallery.City, artGallery.Manager) { Id = Guid.NewGuid() });
+            mock.Setup(m => m.UpdateAsync(It.IsAny<ArtGallery>(), It.IsAny<CancellationToken>())).ReturnsAsync(g1);
 
             return mock;
         }
