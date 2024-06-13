@@ -10,11 +10,11 @@ namespace VAArtGalleryWebAPI.WebApi.Controllers
     public class ArtGalleryController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<List<GetAllArtGalleriesResult>>> GetAllGalleries()
+        public async Task<ActionResult<List<GetArtGalleryResult>>> GetAllGalleries()
         {
             var galleries = await mediator.Send(new GetAllArtGalleriesQuery());
 
-            var result = galleries.Select(g => new GetAllArtGalleriesResult(g.Id, g.Name, g.City, g.Manager, g.ArtWorksOnDisplay?.Count ?? 0)).ToList();
+            var result = galleries.Select(g => new GetArtGalleryResult(g.Id, g.Name, g.City, g.Manager, g.ArtWorksOnDisplay?.Count ?? 0)).ToList();
 
             return Ok(result);
         }

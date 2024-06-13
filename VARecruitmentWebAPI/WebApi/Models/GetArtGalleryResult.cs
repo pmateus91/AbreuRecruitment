@@ -1,6 +1,6 @@
 ﻿namespace VAArtGalleryWebAPI.WebApi.Models
 {
-    public class GetAllArtGalleriesResult(Guid id, string name, string city, string manager, int nbrOfArtWorksOnDisplay)
+    public class GetArtGalleryResult(Guid id, string name, string city, string manager, int nbrOfArtWorksOnDisplay)
     {
         public Guid Id { get; set; } = id;
         public string Name { get; set; } = name;
