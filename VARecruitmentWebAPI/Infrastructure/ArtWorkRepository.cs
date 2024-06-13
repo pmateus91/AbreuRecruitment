@@ -8,6 +8,31 @@ namespace VAArtGalleryWebAPI.Infrastructure
     {
         private readonly string _filePath = filePath;
 
+        public async Task<List<ArtWork>> GetArtWorksByGalleryIdAsync(Guid artGalleryId, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var galleries = await new ArtGalleryRepository(_filePath).GetAllArtGalleriesAsync(cancellationToken);
+
+            var gallery = galleries.Find(g => g.Id == artGalleryId) ?? throw new ArgumentException("unknown art gallery", nameof(artGalleryId));
+            if (gallery.ArtWorksOnDisplay == null)
+            {
+                return [];
+            }
+            return gallery.ArtWorksOnDisplay;
+        }
+
+        public async Task<ArtWork?> GetArtWorkyByIdAsync(Guid artWorkId, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var galleries = await new ArtGalleryRepository(_filePath).GetAllArtGalleriesAsync(cancellationToken);
+
+            return galleries
+                .SelectMany(g => g.ArtWorksOnDisplay ?? Enumerable.Empty<ArtWork>())
+                .FirstOrDefault(aw => aw.Id == artWorkId);
+        }
+
         public async Task<ArtWork> CreateAsync(Guid artGalleryId, ArtWork artWork, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -88,20 +113,6 @@ namespace VAArtGalleryWebAPI.Infrastructure
             await SaveGalleries(galleries);
 
             return true;
-        }
-
-        public async Task<List<ArtWork>> GetArtWorksByGalleryIdAsync(Guid artGalleryId, CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var galleries = await new ArtGalleryRepository(_filePath).GetAllArtGalleriesAsync(cancellationToken);
-
-            var gallery = galleries.Find(g => g.Id == artGalleryId) ?? throw new ArgumentException("unknown art gallery", nameof(artGalleryId));
-            if (gallery.ArtWorksOnDisplay == null)
-            {
-                return [];
-            }
-            return gallery.ArtWorksOnDisplay;
         }
 
         private async Task SaveGalleries(List<ArtGallery> galleries)
