@@ -1,9 +1,11 @@
 .main-container {
   margin: 20px auto 20px;
-  width: 800px;
+  width: 1024px;
   display: flex;
   text-align: center;
   min-height: 88vh;
-  background-color:white;
-  padding: 15px
+  background-color: white;
+  padding: 15px;
+  align-items: center;
+  flex-direction: column;
 }
