@@ -1,4 +1,4 @@
-export interface Gallery {
+export interface ArtGalleryDto {
   id: string;
   name: string;
   city: string;

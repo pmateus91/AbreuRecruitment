@@ -1,0 +1,27 @@
+<div class="dialog-container">
+  <h1 mat-dialog-title>
+    {{ obj && obj.artGallery ? "Editar Galeria de Arte" : "Adicionar Galeria de Arte" }}
+  </h1>
+  <div mat-dialog-content>
+    <div class="form-container">
+      <form [formGroup]="formArtGalleryGroup">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Cidade</mat-label>
+          <input matInput formControlName="city" />
+        </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Responsável</mat-label>
+          <input matInput formControlName="manager" />
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+  <div mat-dialog-actions class="actions-container">
+    <button mat-stroked-button mat-dialog-close>Fechar</button>
+    <button mat-flat-button (click)="saveClick()">Gravar</button>
+  </div>
+</div>
