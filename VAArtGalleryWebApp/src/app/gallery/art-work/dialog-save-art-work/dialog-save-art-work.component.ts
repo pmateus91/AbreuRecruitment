@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ArtWorkDto } from '../../dtos/art-work/art-work.dto';
 import { SaveArtWorkDto } from '../../dtos/art-work/save-art-work.dto';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertService } from '../../../shared-components/alert.service';
 
 @Component({
   selector: 'app-dialog-save-art-work',
@@ -15,7 +16,8 @@ export class DialogSaveArtWorkComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public obj: any,
     private _dialogRef: MatDialogRef<DialogSaveArtWorkComponent>,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private alertService: AlertService
   ) {
     this.formArtWorkGroup = this._formBuilder.group({
       name: ['', Validators.required],
@@ -55,6 +57,7 @@ export class DialogSaveArtWorkComponent {
       this._dialogRef.close(this.formArtWorkGroup.value);
     } else {
       this.formArtWorkGroup.markAllAsTouched();
+      this.alertService.warning('Preencha todos os campos obrigatórios');
     }
   }
 

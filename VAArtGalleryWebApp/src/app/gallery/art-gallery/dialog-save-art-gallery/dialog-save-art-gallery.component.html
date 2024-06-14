@@ -8,14 +8,23 @@
         <mat-form-field class="full-width" appearance="outline">
           <mat-label>Nome</mat-label>
           <input matInput formControlName="name" />
+          <mat-error *ngIf="formArtGalleryGroup.controls['name'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width" appearance="outline">
           <mat-label>Cidade</mat-label>
           <input matInput formControlName="city" />
+          <mat-error *ngIf="formArtGalleryGroup.controls['city'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width" appearance="outline">
           <mat-label>Responsável</mat-label>
           <input matInput formControlName="manager" />
+          <mat-error *ngIf="formArtGalleryGroup.controls['manager'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
         </mat-form-field>
       </form>
     </div>

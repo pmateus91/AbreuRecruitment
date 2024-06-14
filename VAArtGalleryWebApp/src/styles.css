@@ -75,3 +75,14 @@ input[type="number"] {
     color: white !important;
   }
 }
+
+.snackbar-warning {
+  .mdc-snackbar__surface {
+    background-color: darkorange !important;
+    text-align: center !important;
+  }
+
+  .mdc-snackbar__label {
+    color: white !important;
+  }
+}

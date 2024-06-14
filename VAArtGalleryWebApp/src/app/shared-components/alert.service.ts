@@ -14,6 +14,13 @@ export class AlertService {
     });
   }
 
+  warning(message: string) {
+    this.snackBar.open(message, '', {
+      duration: 2500,
+      panelClass: 'snackbar-warning',
+    });
+  }
+
   error(message: string) {
     this.snackBar.open(message, '', {
       duration: 2500,

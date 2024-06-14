@@ -190,12 +190,9 @@ describe('GalleryComponent', () => {
 
       component.openArtWorksList(artGallery);
 
-      expect(mockRouter.navigate).toHaveBeenCalledWith(
-        [`art-galleries/${artGallery.id}/art-works`],
-        {
-          state: { artGallery },
-        }
-      );
+      expect(mockRouter.navigate).toHaveBeenCalledWith([`art-gallery/art-works`], {
+        state: { artGallery },
+      });
     });
   });
 });

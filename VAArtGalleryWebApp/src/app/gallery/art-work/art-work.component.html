@@ -19,8 +19,8 @@
     </ng-container>
 
     <ng-container matColumnDef="askPrice">
-      <th mat-header-cell *matHeaderCellDef>Preço Pedido</th>
-      <td mat-cell *matCellDef="let artWork">
+      <th mat-header-cell *matHeaderCellDef style="text-align: center">Preço Pedido</th>
+      <td mat-cell *matCellDef="let artWork" style="text-align: right">
         {{ formatPrice(artWork.askPrice) }}
       </td>
     </ng-container>
