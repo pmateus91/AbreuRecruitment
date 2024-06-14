@@ -14,9 +14,17 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogSaveArtGalleryComponent } from './gallery/art-gallery/dialog-save-art-gallery/dialog-save-art-gallery.component';
 import { GalleryComponent } from './gallery/art-gallery/gallery.component';
+import { ArtWorkComponent } from './gallery/art-work/art-work.component';
+import { DialogSaveArtWorkComponent } from './gallery/art-work/dialog-save-art-work/dialog-save-art-work.component';
 
 @NgModule({
-  declarations: [AppComponent, GalleryComponent, DialogSaveArtGalleryComponent],
+  declarations: [
+    AppComponent,
+    GalleryComponent,
+    DialogSaveArtGalleryComponent,
+    ArtWorkComponent,
+    DialogSaveArtWorkComponent,
+  ],
   imports: [
     CommonModule,
     BrowserModule,

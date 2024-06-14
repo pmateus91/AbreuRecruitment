@@ -1,0 +1,13 @@
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+}
+
+.button-container button:first-child {
+  margin-right: auto;
+}
+
+.button-container button:last-child {
+  margin-left: auto;
+}

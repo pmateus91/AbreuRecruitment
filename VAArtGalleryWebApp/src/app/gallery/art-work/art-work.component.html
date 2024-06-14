@@ -1,0 +1,57 @@
+<div>
+  <h1>Galerias de Arte Família Abreu</h1>
+  <h2>Galeria: '{{ artGallery.name }}'</h2>
+
+  <table mat-table [dataSource]="artWorks" class="styled-table">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nome</th>
+      <td mat-cell *matCellDef="let artWork">{{ artWork.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="author">
+      <th mat-header-cell *matHeaderCellDef>Autor</th>
+      <td mat-cell *matCellDef="let artWork">{{ artWork.author }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="creationYear">
+      <th mat-header-cell *matHeaderCellDef>Ano de Criação</th>
+      <td mat-cell *matCellDef="let artWork">{{ artWork.creationYear }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="askPrice">
+      <th mat-header-cell *matHeaderCellDef>Preço Pedido</th>
+      <td mat-cell *matCellDef="let artWork">
+        {{ formatPrice(artWork.askPrice) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="actions"></th>
+      <td mat-cell *matCellDef="let artWork" class="actions">
+        <span>
+          <mat-icon
+            aria-hidden="false"
+            aria-label="edit"
+            fontIcon="edit"
+            (click)="editArtWorkClick(artWork.id)"
+          ></mat-icon>
+          <mat-icon
+            aria-hidden="false"
+            aria-label="delete"
+            fontIcon="delete"
+            (click)="deleteArtWorkClick(artWork.id)"
+          ></mat-icon>
+        </span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <div class="button-container">
+    <button mat-stroked-button (click)="backToGalleryList()">Voltar</button>
+    <button mat-flat-button color="primary" (click)="createArtWorkClick()">
+      <mat-icon>add</mat-icon> Adicionar Obra de Arte
+    </button>
+  </div>
+</div>

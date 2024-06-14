@@ -1,0 +1,28 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mat-mdc-dialog-title {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.dialog-container {
+  padding: 1rem;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-mdc-dialog-actions {
+  margin-top: 1rem;
+}

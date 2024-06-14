@@ -97,7 +97,7 @@ export class GalleryComponent implements OnInit {
       return;
     }
 
-    this.router.navigate([`art-galleries/${artGallery.id}/art-works`], {
+    this.router.navigate([`art-gallery/art-works`], {
       state: { artGallery },
     });
   }

@@ -1,0 +1,47 @@
+<div class="dialog-container">
+  <h1 mat-dialog-title>
+    {{ obj && obj.artWork ? "Editar Obra de Arte" : "Adicionar Obra de Arte" }}
+  </h1>
+  <div mat-dialog-content>
+    <div class="form-container">
+      <form [formGroup]="formArtWorkGroup">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="formArtWorkGroup.controls['name'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Autor</mat-label>
+          <input matInput formControlName="author" />
+          <mat-error *ngIf="formArtWorkGroup.controls['author'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Ano de Criação</mat-label>
+          <input matInput type="number" formControlName="creationYear" />
+          <mat-error *ngIf="formArtWorkGroup.controls['creationYear'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Preço Pedido</mat-label>
+          <span matPrefix style="margin-left: 0.5rem">€</span>
+          <input matInput type="number" formControlName="askPrice" />
+          <mat-error *ngIf="formArtWorkGroup.controls['askPrice'].hasError('required')"
+            >Campo obrigatório.
+          </mat-error>
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+  <div mat-dialog-actions class="actions-container">
+    <button mat-stroked-button mat-dialog-close>Fechar</button>
+    <button mat-flat-button (click)="saveClick()">Gravar</button>
+  </div>
+</div>
